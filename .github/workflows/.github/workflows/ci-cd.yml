@@ -1,0 +1,18 @@
+name: CI/CD Pipeline
+on:
+  push:
+    branches: [main]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build Docker Images
+      run: |
+        docker build -t yourdockerhub/auth-service ./auth-service
+        docker build -t yourdockerhub/student-service ./student-service
+    - name: Push Docker Images
+      run: |
+        echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+        docker push yourdockerhub/auth-service
+        docker push yourdockerhub/student-service
